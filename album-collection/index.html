@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Album Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;700&display=swap");
+
+      body {
+        font-family: "Roboto Slab", serif;
+        background-color: #0f130f;
+        color: white;
+        min-height: 100vh;
+      }
+
+      /* Navigation */
+      .nav-link {
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: white;
+        transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .nav-link:hover::after,
+      .nav-link.active::after {
+        width: 100%;
+      }
+
+      /* Page transitions */
+      .page-content {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        width: 100%;
+      }
+
+      .page-content.active {
+        opacity: 1;
+        transform: translateY(0);
+        position: relative;
+      }
+
+      .page-content.hidden {
+        display: none;
+      }
+
+      /* Album covers */
+      .album-cover {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transform-origin: center;
+      }
+
+      .album-cover:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Buttons */
+      .btn-hover {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+      }
+
+      /* Animations */
+      @keyframes fadeSlideIn {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-slide-in {
+        animation: fadeSlideIn 0.6s ease forwards;
+      }
+
+      /* Form elements */
+      .form-input {
+        transition: all 0.3s ease;
+        background-color: rgba(15, 19, 15, 0.8);
+      }
+
+      .form-input:focus {
+        background-color: rgba(15, 19, 15, 0.9);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+      }
+
+      /* Contact cards */
+      .contact-card {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .contact-card:hover {
+        transform: translateY(-5px);
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      </style>
+      <style>
+        /* Hero section styles */
+        #hero {
+          position: relative;
+          height: 80vh;
+          overflow: hidden;
+          perspective: 1000px;
+          background: linear-gradient(135deg, #1a1a1a, #0f130f);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          text-align: center;
+          padding: 0 1rem;
+        }
+
+        #hero .layer {
+          position: absolute;
+          width: 110%;
+          height: 110%;
+          top: -5%;
+          left: -5%;
+          background-size: cover;
+          background-position: center;
+          will-change: transform;
+          transition: transform 0.2s ease-out;
+        }
+
+        #hero .layer.bg1 {
+          background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80');
+          z-index: 1;
+          filter: brightness(0.6);
+        }
+
+        #hero .layer.bg2 {
+          background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80');
+          z-index: 2;
+          filter: brightness(0.8);
+        }
+
+        #hero .content {
+          position: relative;
+          z-index: 3;
+          max-width: 700px;
+          animation: fadeSlideIn 1s ease forwards;
+        }
+
+        #hero h1 {
+          font-size: 3rem;
+          font-weight: 900;
+          margin-bottom: 1rem;
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+
+        #hero p {
+          font-size: 1.25rem;
+          margin-bottom: 2rem;
+          text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        #hero button {
+          background-color: white;
+          color: black;
+          font-weight: 700;
+          padding: 0.75rem 2rem;
+          border-radius: 9999px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        #hero button:hover {
+          background-color: #e5e5e5;
+        }
+      </style>
+    </head>
+    <body>
+      <header
+        class="flex justify-between items-center px-6 py-6 max-w-7xl mx-auto"
+      >
+        <div class="text-white text-lg font-medium tracking-wider">
+          ALBUM<span class="text-gray-400">COLLECT</span>
+        </div>
+        <nav class="space-x-8 text-white text-sm font-medium tracking-wider">
+          <a class="nav-link active" href="#" id="home-link">HOME</a>
+          <a class="nav-link" href="#" id="gallery-link">GALLERY</a>
+          <a class="nav-link" href="#" id="about-link">ABOUT</a>
+          <a class="nav-link" href="#" id="contact-link">CONTACT</a>
+        </nav>
+      </header>
+
+      <main class="max-w-7xl mx-auto px-6 pb-16 relative min-h-[70vh]">
+        <!-- HERO SECTION -->
+        <section id="hero">
+          <div class="layer bg1"></div>
+          <div class="layer bg2"></div>
+          <div class="content">
+            <h1>Experience Music in a New Dimension</h1>
+            <p>Explore our curated album collection with immersive 4D effects</p>
+            <button>Explore Now</button>
+          </div>
+        </section>
+
+        <!-- HOME PAGE CONTENT -->
+        <div id="home-content" class="page-content active">
+          <h1
+            class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
+          >
+            DISCOVER MUSIC VISUALLY
+          </h1>
+          <section
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
+          >
+            <article class="album-cover fade-slide-in" style="animation-delay: 0.1s">
+              <div class="overflow-hidden rounded-xl">
+                <img
+                  alt="Daydream album cover"
+                  class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                  src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                />
+              </div>
+              <h2 class="text-white font-bold mt-4 text-xl">Daydream</h2>
+            <p class="text-gray-400 text-sm mt-1">2021 • Electronic</p>
+          </article>
+        </section>
+
+          <article class="album-cover fade-slide-in" style="animation-delay: 0.2s">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                alt="Golden Age album cover"
+                class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80"
+              />
+            </div>
+            <h2 class="text-white font-bold mt-4 text-xl">Golden Age</h2>
+            <p class="text-gray-400 text-sm mt-1">2018 • Indie</p>
+          </article>
+
+          <article class="album-cover fade-slide-in" style="animation-delay: 0.3s">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                alt="Aether album cover"
+                class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=400&q=80"
+              />
+            </div>
+            <h2 class="text-white font-bold mt-4 text-xl">Aether</h2>
+            <p class="text-gray-400 text-sm mt-1">2022 • Ambient</p>
+          </article>
+
+          <article class="album-cover fade-slide-in" style="animation-delay: 0.4s">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                alt="Midnight Waves album cover"
+                class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=400&q=80"
+              />
+            </div>
+            <h2 class="text-white font-bold mt-4 text-xl">Midnight Waves</h2>
+            <p class="text-gray-400 text-sm mt-1">2019 • Chillwave</p>
+          </article>
+        </section>
+
+        <div class="flex justify-center mt-12">
+          <button
+            class="btn-hover border-2 border-white text-white px-8 py-3 text-sm tracking-widest hover:bg-white hover:text-black transition-all duration-400 rounded-full"
+          >
+            LOAD MORE ALBUMS
+          </button>
+        </div>
+      </div>
+
+      <!-- GALLERY PAGE CONTENT -->
+      <div id="gallery-content" class="page-content">
+        <h1
+          class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
+        >
+          FULL COLLECTION
+        </h1>
+
+        <div class="max-w-6xl mx-auto">
+          <div
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+          >
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.1s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Midnight Waves</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.2s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Aether</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.3s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Golden Age</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.4s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Daydream</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.5s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Neon Dreams</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.6s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Solar Flare</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.7s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Urban Echo</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.8s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Cosmic Dust</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 0.9s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Oceanic</p>
+            </div>
+
+            <div class="album-cover fade-slide-in" style="animation-delay: 1s">
+              <div class="overflow-hidden rounded-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80"
+                  alt="Album cover"
+                  class="w-full h-48 object-cover hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <p class="text-white text-sm mt-2 truncate">Desert Wind</p>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center fade-slide-in" style="animation-delay: 0.3s">
+            <p class="text-gray-400 mb-6">
+              Showing 10 of 248 albums in our collection
+            </p>
+            <button
+              class="btn-hover border-2 border-white text-white px-8 py-3 text-sm tracking-widest hover:bg-white hover:text-black transition-all duration-400 rounded-full"
+            >
+              LOAD MORE ALBUMS
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT PAGE CONTENT -->
+      <div id="about-content" class="page-content">
+        <h1
+          class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
+        >
+          OUR STORY
+        </h1>
+
+        <div class="max-w-4xl mx-auto">
+          <div
+            class="flex flex-col md:flex-row items-center mb-12 gap-8 fade-slide-in"
+            style="animation-delay: 0.2s"
+          >
+            <div class="w-full md:w-1/3">
+              <img
+                src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80"
+                alt="Founder"
+                class="rounded-2xl w-full max-w-xs mx-auto shadow-xl fade-slide-in"
+              />
+            </div>
+            <div class="w-full md:w-2/3">
+              <h2 class="text-2xl font-bold mb-4">
+                Celebrating Album Art Since 2015
+              </h2>
+              <p class="text-gray-300 mb-4">
+                What began as a personal passion project has grown into the
+                web's most comprehensive archive of exceptional album artwork.
+              </p>
+              <blockquote class="italic text-gray-400 mb-4">
+                "Music is the art of thinking with sounds." – Jules Combarieu
+              </blockquote>
+              <div class="flex items-center space-x-4 text-sm text-gray-400">
+                <span>500+ Albums</span>
+                <span>•</span>
+                <span>200+ Artists</span>
+                <span>•</span>
+                <span>15 Genres</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-8 text-gray-300">
+            <div class="fade-slide-in" style="animation-delay: 0.4s">
+              <h3 class="text-xl font-semibold mb-3 text-white">Our Mission</h3>
+              <p>
+                We believe album artwork is an essential part of the musical
+                experience. In an era of digital streaming, we aim to preserve
+                and celebrate the visual artistry that accompanies great music.
+              </p>
+            </div>
+
+            <div class="fade-slide-in" style="animation-delay: 0.6s">
+              <h3 class="text-xl font-semibold mb-3 text-white">
+                The Collection
+              </h3>
+              <p>
+                Our carefully curated selection spans decades and genres, from
+                classic vinyl sleeves to contemporary digital releases. Each
+                piece tells a story and enhances the listening experience.
+              </p>
+            </div>
+
+            <div class="fade-slide-in" style="animation-delay: 0.8s">
+              <h3 class="text-xl font-semibold mb-3 text-white">Community</h3>
+              <p>
+                We collaborate with artists, designers, and music lovers
+                worldwide to document and appreciate the often overlooked art of
+                album design.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="mt-16 border-t border-gray-800 pt-12 text-center fade-slide-in"
+            style="animation-delay: 1s"
+          >
+            <blockquote class="text-xl italic text-gray-400 max-w-2xl mx-auto">
+              "Album art is the visual soul of music - a gateway to the auditory
+              experience within."
+            </blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT PAGE CONTENT -->
+      <div id="contact-content" class="page-content">
+        <h1
+          class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
+        >
+          GET IN TOUCH
+        </h1>
+
+        <div class="max-w-4xl mx-auto">
+          <div class="flex flex-col lg:flex-row gap-12">
+            <div class="w-full lg:w-1/2 fade-slide-in" style="animation-delay: 0.2s">
+              <form class="space-y-6">
+                <div>
+                  <label for="name" class="block text-sm font-medium mb-2"
+                    >Your Name</label
+                  >
+                  <input
+                    type="text"
+                    id="name"
+                    class="form-input w-full border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label for="email" class="block text-sm font-medium mb-2"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    class="form-input w-full border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-white"
+                  />
+                </div>
+
+                <div>
+                  <label for="subject" class="block text-sm font-medium mb-2"
+                    >Subject</label
+                  >
+                  <select
+                    id="subject"
+                    class="form-input w-full border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-white bg-[#0f130f]"
+                  >
+                    <option>General Inquiry</option>
+                    <option>Submission</option>
+                    <option>Collaboration</option>
+                    <option>Press</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="message" class="block text-sm font-medium mb-2"
+                    >Message</label
+                  >
+                  <textarea
+                    id="message"
+                    rows="5"
+                    class="form-input w-full border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-white"
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn-hover bg-white text-black px-8 py-3 text-sm font-bold tracking-widest hover:bg-gray-200 transition-all duration-400 rounded-full w-full"
+                >
+                  SEND MESSAGE
+                </button>
+              </form>
+            </div>
+
+            <div
+              class="w-full lg:w-1/2 space-y-8 fade-slide-in"
+              style="animation-delay: 0.4s"
+            >
+              <div>
+                <h3 class="text-xl font-bold mb-6">CONTACT INFORMATION</h3>
+
+                <div class="space-y-6">
+                  <div
+                    class="contact-card p-6 rounded-xl border border-gray-800 hover:border-gray-600 cursor-pointer"
+                  >
+                    <div class="flex items-center space-x-4">
+                      <div class="bg-gray-800 p-3 rounded-full">
+                        <i class="fas fa-map-marker-alt text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium">Our Studio</h4>
+                        <p class="text-gray-400 text-sm mt-1">
+                          45 Album Art Lane, Brooklyn, NY 11205
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="contact-card p-6 rounded-xl border border-gray-800 hover:border-gray-600 cursor-pointer"
+                  >
+                    <div class="flex items-center space-x-4">
+                      <div class="bg-gray-800 p-3 rounded-full">
+                        <i class="fas fa-envelope text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium">Email Us</h4>
+                        <p class="text-gray-400 text-sm mt-1">
+                          hello@albumcollect.com
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                          submissions@albumcollect.com
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="contact-card p-6 rounded-xl border border-gray-800 hover:border-gray-600 cursor-pointer"
+                  >
+                    <div class="flex items-center space-x-4">
+                      <div class="bg-gray-800 p-3 rounded-full">
+                        <i class="fas fa-phone-alt text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium">Call Us</h4>
+                        <p class="text-gray-400 text-sm mt-1">
+                          +1 (555) 123-4567
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                          Mon-Fri, 10am-6pm EST
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-6 border-t border-gray-800">
+                <h3 class="text-xl font-bold mb-4">CONNECT WITH US</h3>
+                <div class="flex space-x-4">
+                  <a
+                    href="#"
+                    class="contact-card w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center hover:bg-gray-800"
+                  >
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                  <a
+                    href="#"
+                    class="contact-card w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center hover:bg-gray-800"
+                  >
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                  <a
+                    href="#"
+                    class="contact-card w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center hover:bg-gray-800"
+                  >
+                    <i class="fab fa-spotify"></i>
+                  </a>
+                  <a
+                    href="#"
+                    class="contact-card w-12 h-12 rounded-full border border-gray-800 flex items-center justify-center hover:bg-gray-800"
+                  >
+                    <i class="fab fa-pinterest"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize first page
+        showPage("home");
+
+        // Set up navigation event listeners
+        document
+          .getElementById("home-link")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            showPage("home");
+          });
+
+        document
+          .getElementById("gallery-link")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            showPage("gallery");
+          });
+
+        document
+          .getElementById("about-link")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            showPage("about");
+          });
+
+        document
+          .getElementById("contact-link")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            showPage("contact");
+          });
+
+        // Add intersection observer for scroll animations
+        const fadeElements = document.querySelectorAll(".fade-slide-in");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = "translateY(0)";
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        fadeElements.forEach((el) => {
+          observer.observe(el);
+        });
+      });
+
+      function showPage(page) {
+        // Hide all pages immediately
+        document.querySelectorAll(".page-content").forEach((content) => {
+          content.classList.remove("active");
+          content.classList.add("hidden");
+          content.style.opacity = "";
+          content.style.transform = "";
+        });
+
+        // Update active link
+        document.querySelectorAll("nav a").forEach((link) => {
+          link.classList.remove("active");
+        });
+        document.getElementById(`${page}-link`).classList.add("active");
+
+        // Show selected page immediately
+        const activeContent = document.getElementById(`${page}-content`);
+        activeContent.classList.remove("hidden");
+        activeContent.classList.add("active");
+        activeContent.style.opacity = "";
+        activeContent.style.transform = "";
+
+        // Scroll to top smoothly
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    </script>
+  </body>
+</html>
