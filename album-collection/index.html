@@ -17,6 +17,18 @@
         background-color: #0f130f;
         color: white;
         min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Hide scrollbars */
+        height: 100vh;
+        width: 100vw;
+      }
+
+      html, body, #root, main {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
       }
 
       /* Navigation */
@@ -47,6 +59,14 @@
         transform: translateY(20px);
         transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         width: 100%;
+        overflow-y: scroll; /* Allow scroll but hide scrollbar */
+        max-height: 70vh; /* Limit height to avoid scroll */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+      }
+
+      .page-content::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
       }
 
       .page-content.active {
@@ -81,19 +101,10 @@
       }
 
       /* Animations */
-      @keyframes fadeSlideIn {
-        0% {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
+      /* Removed fadeSlideIn keyframe animation */
+      
       .fade-slide-in {
-        animation: fadeSlideIn 0.6s ease forwards;
+        animation: none !important;
       }
 
       /* Form elements */
@@ -116,132 +127,45 @@
         transform: translateY(-5px);
         background-color: rgba(255, 255, 255, 0.05);
       }
-      </style>
-      <style>
-        /* Hero section styles */
-        #hero {
-          position: relative;
-          height: 80vh;
-          overflow: hidden;
-          perspective: 1000px;
-          background: linear-gradient(135deg, #1a1a1a, #0f130f);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          color: white;
-          text-align: center;
-          padding: 0 1rem;
-        }
+    </style>
+  </head>
+  <body>
+    <header
+      class="flex justify-between items-center px-6 py-6 max-w-7xl mx-auto"
+    >
+      <div class="text-white text-lg font-medium tracking-wider">
+        ALBUM<span class="text-gray-400">COLLECT</span>
+      </div>
+      <nav class="space-x-8 text-white text-sm font-medium tracking-wider">
+        <a class="nav-link active" href="#" id="home-link">HOME</a>
+        <a class="nav-link" href="#" id="gallery-link">GALLERY</a>
+        <a class="nav-link" href="#" id="about-link">ABOUT</a>
+        <a class="nav-link" href="#" id="contact-link">CONTACT</a>
+      </nav>
+    </header>
 
-        #hero .layer {
-          position: absolute;
-          width: 110%;
-          height: 110%;
-          top: -5%;
-          left: -5%;
-          background-size: cover;
-          background-position: center;
-          will-change: transform;
-          transition: transform 0.2s ease-out;
-        }
-
-        #hero .layer.bg1 {
-          background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80');
-          z-index: 1;
-          filter: brightness(0.6);
-        }
-
-        #hero .layer.bg2 {
-          background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80');
-          z-index: 2;
-          filter: brightness(0.8);
-        }
-
-        #hero .content {
-          position: relative;
-          z-index: 3;
-          max-width: 700px;
-          animation: fadeSlideIn 1s ease forwards;
-        }
-
-        #hero h1 {
-          font-size: 3rem;
-          font-weight: 900;
-          margin-bottom: 1rem;
-          text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-        }
-
-        #hero p {
-          font-size: 1.25rem;
-          margin-bottom: 2rem;
-          text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-
-        #hero button {
-          background-color: white;
-          color: black;
-          font-weight: 700;
-          padding: 0.75rem 2rem;
-          border-radius: 9999px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
-
-        #hero button:hover {
-          background-color: #e5e5e5;
-        }
-      </style>
-    </head>
-    <body>
-      <header
-        class="flex justify-between items-center px-6 py-6 max-w-7xl mx-auto"
-      >
-        <div class="text-white text-lg font-medium tracking-wider">
-          ALBUM<span class="text-gray-400">COLLECT</span>
-        </div>
-        <nav class="space-x-8 text-white text-sm font-medium tracking-wider">
-          <a class="nav-link active" href="#" id="home-link">HOME</a>
-          <a class="nav-link" href="#" id="gallery-link">GALLERY</a>
-          <a class="nav-link" href="#" id="about-link">ABOUT</a>
-          <a class="nav-link" href="#" id="contact-link">CONTACT</a>
-        </nav>
-      </header>
-
-      <main class="max-w-7xl mx-auto px-6 pb-16 relative min-h-[70vh]">
-        <!-- HERO SECTION -->
-        <section id="hero">
-          <div class="layer bg1"></div>
-          <div class="layer bg2"></div>
-          <div class="content">
-            <h1>Experience Music in a New Dimension</h1>
-            <p>Explore our curated album collection with immersive 4D effects</p>
-            <button>Explore Now</button>
-          </div>
-        </section>
-
-        <!-- HOME PAGE CONTENT -->
-        <div id="home-content" class="page-content active">
-          <h1
-            class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
-          >
-            DISCOVER MUSIC VISUALLY
-          </h1>
-          <section
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
-          >
-            <article class="album-cover fade-slide-in" style="animation-delay: 0.1s">
-              <div class="overflow-hidden rounded-xl">
-                <img
-                  alt="Daydream album cover"
-                  class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
-                  src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
-                />
-              </div>
-              <h2 class="text-white font-bold mt-4 text-xl">Daydream</h2>
+    <main class="max-w-7xl mx-auto px-6 pb-16 relative min-h-[70vh]">
+      <!-- HOME PAGE CONTENT -->
+      <div id="home-content" class="page-content active">
+        <h1
+          class="text-gray-300 text-4xl md:text-5xl font-bold mb-12 tracking-wider text-center fade-slide-in"
+        >
+          DISCOVER MUSIC VISUALLY
+        </h1>
+        <section
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
+        >
+          <article class="album-cover fade-slide-in" style="animation-delay: 0.1s">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                alt="Daydream album cover"
+                class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+              />
+            </div>
+            <h2 class="text-white font-bold mt-4 text-xl">Daydream</h2>
             <p class="text-gray-400 text-sm mt-1">2021 • Electronic</p>
           </article>
-        </section>
 
           <article class="album-cover fade-slide-in" style="animation-delay: 0.2s">
             <div class="overflow-hidden rounded-xl">
@@ -714,21 +638,12 @@
         // Add intersection observer for scroll animations
         const fadeElements = document.querySelectorAll(".fade-slide-in");
 
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = "translateY(0)";
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
+        // Removed IntersectionObserver for fadeSlideIn animation
+        // No animation will be triggered on scroll
 
-        fadeElements.forEach((el) => {
-          observer.observe(el);
-        });
+        // fadeElements.forEach((el) => {
+        //   observer.observe(el);
+        // });
       });
 
       function showPage(page) {
